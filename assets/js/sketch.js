@@ -12,9 +12,11 @@ function gotResults(error, results){
     } else {
         print(results);
 
-        let label = results[0].label;
-        let probability = (results[0].confidence * 100).toFixed(2);
-        createP(`${label} : ${probability}%`);
+        for (let i = 0; i < results.length; i++) {
+            let label = results[i].label;
+            let probability = (results[i].confidence * 100).toFixed(2);
+            createP(`${label} : ${probability}%`);
+        }
     }
 }
 
