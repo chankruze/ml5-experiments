@@ -1,32 +1,44 @@
 let mobilenet;
-let puffin;
+let video;
+let label;
 
 function modelLoaded() {
     print('Model is Loaded !');
-    mobilenet.classify(puffin, gotResults);
+    mobilenet.classify(gotResults);
 }
 
 function gotResults(error, results){
     if(error) {
         console.error(error);
     } else {
-        print(results);
+        // print(results);
 
-        for (let i = 0; i < results.length; i++) {
-            let label = results[i].label;
-            let probability = (results[i].confidence * 100).toFixed(2);
-            createP(`${label} : ${probability}%`);
-        }
+        // for (let i = 0; i < results.length; i++) {
+        //     label = results[i].label;
+        //     let probability = (results[i].confidence * 100).toFixed(2);
+        //     createP(`${label} : ${probability}%`);
+        // }
+        label = results[0].label;
+        mobilenet.classify(gotResults);
     }
 }
 
-function imageReady() {
-    image(puffin, 0, 0, width, height);
-}
+// function imageReady() {
+//     image(puffin, 0, 0, width, height);
+// }
 
 function setup() {
-    createCanvas(640, 480);
+    createCanvas(640, 510);
     background(200);
-    puffin = loadImage('assets/images/puffin.jpg', imageReady);
-    mobilenet = ml5.imageClassifier('MobileNet', modelLoaded);
+    video = createCapture(VIDEO)
+    video.hide();
+    mobilenet = ml5.imageClassifier('MobileNet', video, modelLoaded);
+}
+
+function draw() {
+    background(0);
+    image(video, 0, 0);
+    fill(255);
+    textSize(16);
+    text(label, 10, height - 10);
 }
