@@ -2,8 +2,8 @@ let mobilenet;
 let video;
 let label;
 let classifier;
-let chandanButton;
-let phoneButton;
+let happyButton;
+let sadButton;
 let trainButton;
 
 function modelReady() {
@@ -43,14 +43,14 @@ function setup() {
     mobilenet = ml5.featureExtractor('MobileNet', modelReady);
     classifier = mobilenet.classification(video, videoReady);
 
-    chandanButton = createButton('chandan');
-    chandanButton.mousePressed(() => {
-        classifier.addImage('chandan');
+    happyButton = createButton('chandan');
+    happyButton.mousePressed(() => {
+        classifier.addImage('happy');
     });
 
-    phoneButton = createButton('phone');
-    phoneButton.mousePressed(() => {
-        classifier.addImage('phone');
+    sadButton = createButton('phone');
+    sadButton.mousePressed(() => {
+        classifier.addImage('sad');
     });
 
     trainButton = createButton('Train');
