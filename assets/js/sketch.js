@@ -1,38 +1,62 @@
 let mobilenet;
 let video;
 let label;
+let classifier;
+let chandanButton;
+let phoneButton;
+let trainButton;
 
-function modelLoaded() {
-    print('Model is Loaded !');
-    mobilenet.classify(gotResults);
+function modelReady() {
+    print('Model is Ready !');
+    // mobilenet.classify(gotResults);
 }
 
-function gotResults(error, results){
-    if(error) {
+function videoReady() {
+    print('Video is Ready !');
+}
+
+function whileTraining(loss) {
+    if (loss == null) {
+        print('Training complete');
+
+        classifier.classify(gotResults);
+    } else {
+        print(loss);
+    }
+}
+
+function gotResults(error, results) {
+    if (error) {
         console.error(error);
     } else {
         // print(results);
-
-        // for (let i = 0; i < results.length; i++) {
-        //     label = results[i].label;
-        //     let probability = (results[i].confidence * 100).toFixed(2);
-        //     createP(`${label} : ${probability}%`);
-        // }
         label = results[0].label;
         mobilenet.classify(gotResults);
     }
 }
-
-// function imageReady() {
-//     image(puffin, 0, 0, width, height);
-// }
 
 function setup() {
     createCanvas(640, 510);
     background(200);
     video = createCapture(VIDEO)
     video.hide();
-    mobilenet = ml5.imageClassifier('MobileNet', video, modelLoaded);
+    mobilenet = ml5.featureExtractor('MobileNet', modelReady);
+    classifier = mobilenet.classification(video, videoReady);
+
+    chandanButton = createButton('chandan');
+    chandanButton.mousePressed(() => {
+        classifier.addImage('chandan');
+    });
+
+    phoneButton = createButton('phone');
+    phoneButton.mousePressed(() => {
+        classifier.addImage('phone');
+    });
+
+    trainButton = createButton('Train');
+    trainButton.mousePressed(() => {
+        classifier.train(whileTraining);
+    });
 }
 
 function draw() {
