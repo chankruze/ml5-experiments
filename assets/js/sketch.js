@@ -1,10 +1,10 @@
 let mobilenet;
 let video;
-let label;
-let classifier;
-let happyButton;
-let sadButton;
+let value = 0;
+let regressor;
+let AddButton;
 let trainButton;
+let slider;
 
 function modelReady() {
     print('Model is Ready !');
@@ -19,19 +19,19 @@ function whileTraining(loss) {
     if (loss == null) {
         print('Training complete');
 
-        classifier.classify(gotResults);
+        regressor.predict(gotResults);
     } else {
         print(loss);
     }
 }
 
-function gotResults(error, results) {
+function gotResults(error, result) {
     if (error) {
         console.error(error);
     } else {
         // print(results);
-        label = results[0].label;
-        mobilenet.classify(gotResults);
+        value = result.value;
+        regressor.predict(gotResults);
     }
 }
 
@@ -41,28 +41,30 @@ function setup() {
     video = createCapture(VIDEO)
     video.hide();
     mobilenet = ml5.featureExtractor('MobileNet', modelReady);
-    classifier = mobilenet.classification(video, videoReady);
+    regressor = mobilenet.regression(video, videoReady);
 
-    happyButton = createButton('chandan');
-    happyButton.mousePressed(() => {
-        classifier.addImage('happy');
-    });
+    slider = createSlider(0, 1, 0.5, 0.01);
 
-    sadButton = createButton('phone');
-    sadButton.mousePressed(() => {
-        classifier.addImage('sad');
+    AddButton = createButton('Add Image');
+    AddButton.mousePressed(() => {
+        regressor.addImage(slider.value());
     });
 
     trainButton = createButton('Train');
     trainButton.mousePressed(() => {
-        classifier.train(whileTraining);
+        regressor.train(whileTraining);
     });
 }
 
 function draw() {
     background(0);
     image(video, 0, 0);
+
+    rectMode(CENTER);
+    fill(255, 0, 200);
+    rect(value*width, height / 2, 50, 50);
+
     fill(255);
     textSize(16);
-    text(label, 10, height - 10);
+    text(value, 10, height - 10);
 }
